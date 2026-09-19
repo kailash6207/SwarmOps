@@ -15,73 +15,19 @@
 **SwarmOps** coordinates specialized AI agents via a cyclic LangGraph state machine, hardened by an API security boundary, persistent checkpointer memory, and interactive execution sandboxes.
 
 ```mermaid
-flowchart TD
-    subgraph UI["🖥️ Presentation Layer (Next.js 16)"]
-        Dashboard["Full-Width Control Dashboard"]
-        Chaos["🐒 Chaos Outage Simulator"]
-        Voice["🎙️ Voice Mission Input"]
-        Chat["💬 Interrogate Swarm Chat"]
-        SSE["⚡ Real-Time SSE Telemetry"]
+flowchart LR
+    Ingress(["💻 Ingress<br/>Dashboard • Voice • Chaos"]) --> WAF["🛡️ WAF & OWASP<br/>Guardrail Boundary"]
+    WAF --> Swarm
+
+    subgraph Swarm ["🤖 LangGraph Autonomous Swarm Pipeline"]
+        direction LR
+        R["🔍 1. Researcher<br/>Telemetry & Discovery"] --> S["🛡️ 2. DevSecOps<br/>Threat & Blast Radius"]
+        S --> E["⚖️ 3. Evaluator<br/>Readiness Score (0-100)"]
+        E -->|"HITL Gate"| W["✍️ 4. Writer<br/>Runbooks & Cloud IaC"]
     end
 
-    subgraph WAF["🛡️ Security Boundary & WAF (FastAPI)"]
-        RateLimit["Rate Limiter (45 req/min)"]
-        Sanitizer["OWASP LLM01 Injection Guardrail"]
-        ThreadVal["Thread ID Validation"]
-    end
-
-    subgraph SWARM["🤖 LangGraph Multi-Agent Swarm Pipeline"]
-        direction TB
-        Node1["🔍 1. SRE Researcher Agent<br/>• Telemetry & P99 Latency Sweep<br/>• Architecture Topology Discovery"]
-        Node2["🛡️ 2. DevSecOps Sentinel Agent<br/>• Threat Modeling & Blast Radius<br/>• Zero-Trust & IAM Boundary Audit"]
-        Node3["⚖️ 3. SRE Evaluator Engine<br/>• Readiness Score (0–100)<br/>• Quality Criteria Verification"]
-        Gate{"🛑 Human Approval Gate<br/>(Enforced on High Risk)"}
-        Node4["✍️ 4. Runbook & IaC Architect<br/>• Atomic Failover Runbook<br/>• Multi-Cloud Terraform & Ansible"]
-    end
-
-    subgraph MEMORY["💾 State Engine & Memory"]
-        Checkpointer[("LangGraph MemorySaver<br/>Thread Checkpointer")]
-    end
-
-    subgraph DELIVER["📦 Production Artifacts & Execution"]
-        Runbook["📋 Verified Incident Runbook"]
-        Sandbox["🧪 Interactive Dry-Run Sandbox"]
-        IaC["☁️ Multi-Cloud IaC (AWS / GCP / Azure)"]
-        RCA["📊 SRE Post-Mortem & RCA Report"]
-    end
-
-    %% Ingress Flow
-    Dashboard --> RateLimit
-    Chaos --> RateLimit
-    Voice --> RateLimit
-    RateLimit --> Sanitizer
-    Sanitizer --> ThreadVal
-    ThreadVal --> Node1
-
-    %% Swarm Transitions
-    Node1 -->|Architecture Dossier| Node2
-    Node2 -->|DevSecOps Threat Audit| Node3
-    Node3 -->|Readiness Evaluated| Gate
-    Gate -->|"Approved (Low Risk / Auto)"| Node4
-    Gate -.->|"Paused (High Risk / HITL)"| Dashboard
-    Dashboard -.->|"Resume API (Supervisor Sign-Off)"| Node4
-
-    %% Deliverables
-    Node4 --> Runbook
-    Node4 --> Sandbox
-    Node4 --> IaC
-    Node4 --> RCA
-    Node4 -.-> SSE
-    SSE -.-> Dashboard
-
-    %% Interrogate Swarm
-    Chat <==>|"Direct Agent Q&A"| Checkpointer
-
-    %% State Memory Bindings
-    Node1 <===> Checkpointer
-    Node2 <===> Checkpointer
-    Node3 <===> Checkpointer
-    Node4 <===> Checkpointer
+    Swarm <===> Mem[("💾 State Checkpointer<br/>(Thread Memory)")]
+    Swarm --> Artifacts(["📦 Verified Output<br/>Runbook • Sandbox • IaC • RCA"])
 ```
 
 ---
