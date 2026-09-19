@@ -1,4 +1,4 @@
-# 🤖 Multi-Agent Ops Crew
+# 🤖 SwarmOps
 
 > **Autonomous Site Reliability Engineering (SRE) & Multi-Agent Operations Command Center** powered by **FastAPI**, **LangGraph**, and **Next.js 16 (React + Tailwind CSS)**.
 
@@ -10,30 +10,82 @@
 
 ---
 
-## 🌟 Executive Summary & Architecture
+## 🌟 Architecture & Data Flow
 
-**Multi-Agent Ops Crew** is an autonomous operational response platform designed to investigate cloud infrastructure incidents, perform DevSecOps audits, evaluate reliability readiness, enforce Human-in-the-Loop (HITL) authorization gates, and synthesize production-ready runbooks and Infrastructure-as-Code (IaC) modules.
+**SwarmOps** coordinates specialized AI agents via a cyclic LangGraph state machine, hardened by an API security boundary, persistent checkpointer memory, and interactive execution sandboxes.
 
 ```mermaid
 flowchart TD
-    Ingress([Mission Ingested]) --> Res[🔬 1. Lead SRE Researcher Agent]
-    Res -->|Telemetry & Topology Dossier| Sec[🛡️ 2. DevSecOps Sentinel Agent]
-    Sec -->|Threat Matrix & Blast Radius Audit| Eval[⚖️ 3. SRE Evaluator Engine]
-    Eval --> Gate{🛑 Human-in-the-Loop Gate?}
-    Gate -- Approved / Automated --> Wri[✍️ 4. Runbook & IaC Architect]
-    Gate -- High Risk / Enforced --> Human[👨‍💻 Operator Authorization Modal]
-    Human -- Resume API --> Wri
-    Wri --> Deliverable([📋 Production Deliverables & Live Sandbox])
-
-    subgraph State & Memory
-        CP[(MemorySaver Checkpointer)] -.->|State Recall & Persist| Res
-        CP -.->|State Recall & Persist| Sec
-        CP -.->|State Recall & Persist| Eval
-        CP -.->|State Recall & Persist| Wri
+    subgraph UI["🖥️ Presentation Layer (Next.js 16)"]
+        Dashboard["Full-Width Control Dashboard"]
+        Chaos["🐒 Chaos Outage Simulator"]
+        Voice["🎙️ Voice Mission Input"]
+        Chat["💬 Interrogate Swarm Chat"]
+        SSE["⚡ Real-Time SSE Telemetry"]
     end
+
+    subgraph WAF["🛡️ Security Boundary & WAF (FastAPI)"]
+        RateLimit["Rate Limiter (45 req/min)"]
+        Sanitizer["OWASP LLM01 Injection Guardrail"]
+        ThreadVal["Thread ID Validation"]
+    end
+
+    subgraph SWARM["🤖 LangGraph Multi-Agent Swarm Pipeline"]
+        direction TB
+        Node1["🔍 1. SRE Researcher Agent<br/>• Telemetry & P99 Latency Sweep<br/>• Architecture Topology Discovery"]
+        Node2["🛡️ 2. DevSecOps Sentinel Agent<br/>• Threat Modeling & Blast Radius<br/>• Zero-Trust & IAM Boundary Audit"]
+        Node3["⚖️ 3. SRE Evaluator Engine<br/>• Readiness Score (0–100)<br/>• Quality Criteria Verification"]
+        Gate{"🛑 Human Approval Gate<br/>(Enforced on High Risk)"}
+        Node4["✍️ 4. Runbook & IaC Architect<br/>• Atomic Failover Runbook<br/>• Multi-Cloud Terraform & Ansible"]
+    end
+
+    subgraph MEMORY["💾 State Engine & Memory"]
+        Checkpointer[("LangGraph MemorySaver<br/>Thread Checkpointer")]
+    end
+
+    subgraph DELIVER["📦 Production Artifacts & Execution"]
+        Runbook["📋 Verified Incident Runbook"]
+        Sandbox["🧪 Interactive Dry-Run Sandbox"]
+        IaC["☁️ Multi-Cloud IaC (AWS / GCP / Azure)"]
+        RCA["📊 SRE Post-Mortem & RCA Report"]
+    end
+
+    %% Ingress Flow
+    Dashboard --> RateLimit
+    Chaos --> RateLimit
+    Voice --> RateLimit
+    RateLimit --> Sanitizer
+    Sanitizer --> ThreadVal
+    ThreadVal --> Node1
+
+    %% Swarm Transitions
+    Node1 -->|Architecture Dossier| Node2
+    Node2 -->|DevSecOps Threat Audit| Node3
+    Node3 -->|Readiness Evaluated| Gate
+    Gate -->|"Approved (Low Risk / Auto)"| Node4
+    Gate -.->|"Paused (High Risk / HITL)"| Dashboard
+    Dashboard -.->|"Resume API (Supervisor Sign-Off)"| Node4
+
+    %% Deliverables
+    Node4 --> Runbook
+    Node4 --> Sandbox
+    Node4 --> IaC
+    Node4 --> RCA
+    Node4 -.-> SSE
+    SSE -.-> Dashboard
+
+    %% Interrogate Swarm
+    Chat <==>|"Direct Agent Q&A"| Checkpointer
+
+    %% State Memory Bindings
+    Node1 <===> Checkpointer
+    Node2 <===> Checkpointer
+    Node3 <===> Checkpointer
+    Node4 <===> Checkpointer
 ```
 
 ---
+
 
 ## ⚡ Master Features
 
